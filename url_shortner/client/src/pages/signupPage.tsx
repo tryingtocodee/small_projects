@@ -1,16 +1,18 @@
 import { useState } from "react"
 import { Link } from "react-router"
+import useUserStore from "../useStore/authStore"
 export default function SignUpPage(){
     const [username , setUsername] = useState("")
-    const [loading , setLoading] = useState(false)
     const [email , setEmail] = useState("")
     const [password , setPassword] = useState("")
 
+    const {signup , loading} = useUserStore()
 
     function handleSubmit(e : React.FormEvent){
         e.preventDefault()
-        setLoading(true)
+        signup({username , email , password })
     }
+
     return (
         <div className="h-screen w-screen bg-gray-200 flex items-center justify-center">
             <form onSubmit={handleSubmit}>

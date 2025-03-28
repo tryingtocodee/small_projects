@@ -1,15 +1,16 @@
 import { useState } from "react"
 import { Link } from "react-router"
+import useUserStore from "../useStore/authStore"
 
 export default function LoginPage() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    const [loading, setLoading] = useState(false)
-
+    const {login , loading} = useUserStore()
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault()
-        setLoading(true)
+        login({email , password})
+        
     }
     return (
         <div className="bg-gray-200 flex items-center justify-center h-screen w-screen">

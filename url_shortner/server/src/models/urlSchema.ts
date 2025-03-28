@@ -27,6 +27,9 @@ const urlSchema = new mongoose.Schema({
         type :Number ,
         default : 0 
     },
+    createdBy:{
+        type : String,
+    },
     clickHistory : [{
         clickedAt : {type : Date , default :Date.now },
         ipAddress : {type : String},

@@ -12,17 +12,18 @@ async function protectedRoutes(req :Request, res:Response , next:NextFunction) :
         const token = req.cookies.token
 
         if(!token){
-            return res.json("no token found")
+            return res.status(400).json("no token found")
         }
 
         if(!secret){
-            console.log("no jwt secret found in protected routes")
+          
             return res.json("error occured")
         }
 
         const verifyToken :any =  jwt.verify(token , secret)
 
         if(!verifyToken){
+           
             return res.json("incorrect token")
         }
 
@@ -30,6 +31,7 @@ async function protectedRoutes(req :Request, res:Response , next:NextFunction) :
 
         //@ts-ignore
         req.user = user
+        console.log("user found" , user)
 
         next()
     } catch (error : any) {

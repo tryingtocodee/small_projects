@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs"
 import { User } from "../models/userSchema";
 import jwt from "jsonwebtoken"
 import dotenv from "dotenv"
+import { NextFunction } from "express-serve-static-core";
 
 dotenv.config()
 
@@ -13,6 +14,7 @@ async function setCookie(res : Response , token :string){
         sameSite : "strict" ,
         maxAge : 60 * 60 * 1000
     })
+    console.log("get cookie" , token)
 }
 
 const secret = process.env.SECRET
@@ -193,4 +195,14 @@ const updateUserController = async( req :Request , res : Response ) : Promise<an
     }
 }
 
-export  {signUpController , loginController , logoutController , deleteController , updateUserController} 
+const getProfileController = async(req :Request , res : Response , next : NextFunction) : Promise <any> => {
+    try {
+        //@ts-ignore
+       return  res.json(req.user)
+    } catch (error : any) {
+        console.log("error in getprofile controller " , error.message)
+        return res.json("error occured in getProfile")
+    }
+}
+
+export  {signUpController , loginController , logoutController , deleteController , updateUserController , getProfileController} 
