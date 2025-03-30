@@ -1,0 +1,1 @@
+namespace Express helps to  specifically target and extend the types from the Express library - not any general Request type that might exist elsewhere in your code or other libraries. (check auth middlewares)
