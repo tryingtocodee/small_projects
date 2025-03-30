@@ -14,6 +14,7 @@ async function dbConnect () {
             return 
         }
         await mongoose.connect(db)
+        console.log("connected to db ")
     } catch (error : any) {
         console.log("error in db connect")
         return 

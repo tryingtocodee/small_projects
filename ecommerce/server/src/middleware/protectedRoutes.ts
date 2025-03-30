@@ -1,5 +1,5 @@
 import { NextFunction , Request , Response } from "express"
-import {User} from "../model/userModel"
+import {User} from "../model/userModel.js"
 import jwt from "jsonwebtoken"
 import dotenv from "dotenv"
 import { Document } from "mongoose"
@@ -56,4 +56,16 @@ const protectedRoutes = async(req : Request , res : Response , next : NextFuncti
     }
 }
 
-export default protectedRoutes
+
+const adminRoutes = async(req : Request , res : Response , next : NextFunction) :Promise<any> =>{
+    try {
+       if(req.user && req.user.role == "admin"){
+        next()
+       }else return res.json("unauthorized access only admins allowed ")
+    } catch (error : any) {
+        console.log("error in admin Routes" , error.message)
+        return res.status(400).json("error occured")
+    }
+}
+
+export { protectedRoutes , adminRoutes}

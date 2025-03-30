@@ -2,10 +2,11 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken"
 import dotenv from "dotenv"
 import bcrypt from "bcryptjs"
-import { User } from "../model/userModel";
-import setCookie from "../utils/setCookie";
-import sendVerificationEmail from "../utils/emailService";
-import cryptoRandomString from "crypto-random-string";
+import { User } from "../model/userModel.js";
+import setCookie from "../utils/setCookie.js";
+import sendVerificationEmail from "../utils/emailService.js";
+import { nanoid } from "nanoid";
+import { EmailVerification } from "../model/emailVerifcationSchema.js";
 
 dotenv.config()
 
@@ -189,9 +190,22 @@ const verifyEmailController = async (req:Request , res : Response ) :Promise<any
             return res.json("email not found")
         }
 
-        const emailToken = cryptoRandomString({length : 20 , type : 'base64'})
+        const emailToken = nanoid(20)
 
+        const newEmailToken = new EmailVerification({
+            userId : user._id,
+            token : emailToken,
+            created : new Date()
+        })
 
+        await newEmailToken.save()
+
+        await sendVerificationEmail(email , emailToken)
+
+        return res.json({
+            message : "email send",
+            email
+        })
 
 
     } catch (error : any) {
@@ -200,4 +214,44 @@ const verifyEmailController = async (req:Request , res : Response ) :Promise<any
     }
 }
 
-export { signupController, loginController, logoutController, updateUserController, deleteController  , verifyEmailController}
+
+const confirmEmailController = async (req:Request , res : Response ) :Promise<any> =>{
+    try {
+     
+        const {token} = req.query
+
+        if(!token){
+            return res.status(400).json("incorrect token for email verification")
+        }
+
+        const emailTokenRecord : any = await EmailVerification.findOne({token})
+
+        const tokenCreatedAt= new Date(emailTokenRecord?.createdAt!)
+
+        const now = new Date()
+
+        const tokenAge = (now.getTime() - tokenCreatedAt.getTime()) / (1000 * 60 * 60 )
+
+
+        if(tokenAge > 24){
+            await EmailVerification.deleteOne({_id : emailTokenRecord._id})
+            return res.json("token has expired . Request for a new token ")
+        }
+
+        if(!emailTokenRecord){
+            return res.status(400).json("no email token record found ")
+        }
+
+        await User.updateOne({_id : emailTokenRecord.userId} , {$set : {isVerified : true}})
+
+
+        await EmailVerification.deleteOne({_id : emailTokenRecord._id})
+
+        return res.json("email verified successfully")
+    } catch (error : any) {
+        console.log("error occured in confirmEmailController" , )
+        return res.json("error occured")
+    }
+}
+
+export { signupController, loginController, logoutController, updateUserController, deleteController  , verifyEmailController , confirmEmailController}
