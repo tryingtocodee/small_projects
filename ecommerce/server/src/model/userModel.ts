@@ -34,6 +34,18 @@ const userSchema = new mongoose.Schema({
         type : Date,
         defaule : null
     },
+    cartItems : [
+        {
+            quantity : {
+                type : Number,
+                default : 1 ,
+            },
+            product : {
+                type : mongoose.Schema.Types.ObjectId,
+                ref : "Products"
+            }
+        }
+    ]
 }, { timestamps: true })
 
 export const User = mongoose.model("User" , userSchema)

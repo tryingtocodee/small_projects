@@ -4,6 +4,12 @@ import dotenv from "dotenv"
 import dbConnect from "./dbConfig/dbConnect.js"
 import authRoutes from "./routes/authRoutes.js"
 import productRoutes from "./routes/productRoutes.js"
+import cartRoutes from "./routes/productRoutes.js"
+import analyticsRoutes from "./routes/productRoutes.js"
+import couponRoutes from "./routes/productRoutes.js"
+
+//complete in last 
+import paymentRoutes from "./routes/productRoutes.js"
 
 dotenv.config()
 
@@ -16,6 +22,10 @@ app.use(cookieParser())
 
 app.use("/api/auth" , authRoutes)
 app.use("/api/products" , productRoutes)
+app.use("/api/cart" , cartRoutes)
+app.use("/api/payment" , paymentRoutes)
+app.use("/api/analytics" , analyticsRoutes)
+app.use("/api/coupon" , couponRoutes)
 
 
 app.listen(port , () => {

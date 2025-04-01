@@ -13,7 +13,8 @@ interface IUser extends Document {
     role : string ,
     isVerified : boolean ,
     createdAt : Date ,
-    updatedAt : Date
+    updatedAt : Date,
+    cartItems : any
 }
 
 declare global {
